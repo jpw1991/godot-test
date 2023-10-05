@@ -46,34 +46,100 @@ func generateOBJ():
 		Vector2(1.0, 0.0),
 	]
 	
-	var tiles = [Tile.new(0,0,TileType.WALL),Tile.new(0,1,TileType.WALL),Tile.new(0,2,TileType.WALL),
-	Tile.new(1,0,TileType.WALL),Tile.new(1,1,TileType.FLOOR),Tile.new(1,2,TileType.WALL),
-	Tile.new(2,0,TileType.WALL),Tile.new(2,1,TileType.WALL),Tile.new(2,2,TileType.WALL),]
+	# tiles go 
+	var tiles = [
+#		[Tile.new(0,0,TileType.WALL)]
+		[Tile.new(0,0,TileType.WALL),Tile.new(1,0,TileType.WALL)],
+#		[Tile.new(0,0,TileType.WALL),Tile.new(1,0,TileType.WALL),Tile.new(2,0,TileType.WALL)],
+#		[Tile.new(0,1,TileType.WALL),Tile.new(1,1,TileType.FLOOR),Tile.new(2,1,TileType.WALL)],
+#		[Tile.new(2,0,TileType.WALL),Tile.new(1,2,TileType.WALL),Tile.new(2,2,TileType.WALL)],
+		]
 	
-	for tile_index in range(len(tiles)):
-		var tile = tiles[tile_index]
-		var x = tile.x
-		var y = tile.y
-		
-		if tile.tile_type == TileType.FLOOR:
-			# Add vertices, normals, and UVs for a floor tile
-			for i in range(4):
-				vertices.append(tile_vertices[i] + Vector3(x * tile_size, floor_y, -y * tile_size))
+	var faces_by_tile = {}
+	
+	for row in tiles:
+		#var row_length = len(row)
+		var tile_verts = []
+		for column in row:
+			# make the first triangle
+			var position = Vector3(column.x * tile_size, floor_y, -column.y * tile_size)
+			# -0.5,  0.0,  0.5 = bottom left
+			#  0.5,  0.0,  0.5 = bottom right
+			# -0.5,  0.0, -0.5 = top left
+			#  0.5,  0.0,  0.5 = top right
+			vertices.append(position + Vector3(tile_vertices[2])) # top left, index: len-4
+			tile_verts.append(vertices[len(vertices)-1])
+			normals.append(tile_normal)
+			uvs.append(tile_uvs[2])
+			
+			vertices.append(position + Vector3(tile_vertices[0])) # bottom left, index: len-3
+			tile_verts.append(vertices[len(vertices)-1])
+			normals.append(tile_normal)
+			uvs.append(tile_uvs[0])
+			
+			if len(tile_verts) < 4:
+				vertices.append(position + Vector3(tile_vertices[3])) # top right, index: len-2
+				tile_verts.append(vertices[len(vertices)-1])
 				normals.append(tile_normal)
-				uvs.append(tile_uvs[i])
-			# Define faces for a floor tile (two triangles)
-			var base_vertex_index = (y * 3 + x) * 4
-			faces.append([base_vertex_index + 1, base_vertex_index + 2, base_vertex_index + 4])
-			faces.append([base_vertex_index + 1, base_vertex_index + 4, base_vertex_index + 3])
-		elif tile.tile_type == TileType.WALL:
-				# Generate OBJ data for a wall tile (a simple square)
-				var base_vertex_index = (y * 3 + x) * 4
-				for i in range(4):
-					vertices.append(tile_vertices[i] + Vector3(x * tile_size, wall_y, -y * tile_size))
-					normals.append(tile_normal)
-					uvs.append(tile_uvs[i])
-				faces.append([base_vertex_index + 1, base_vertex_index + 2, base_vertex_index + 4])
-				faces.append([base_vertex_index + 1, base_vertex_index + 4, base_vertex_index + 3])
+				uvs.append(tile_uvs[3])
+				
+				vertices.append(position + Vector3(tile_vertices[1])) # bottom right, index: len-1
+				tile_verts.append(vertices[len(vertices)-1])
+				normals.append(tile_normal)
+				uvs.append(tile_uvs[1])
+			# create the faces
+			# faces must be created counter-clockwise
+			var verts_len = len(vertices)
+#			faces.append([verts_len-3, verts_len-2, verts_len])
+#			faces.append([verts_len-3, verts_len, verts_len-1])
+			#faces.append([verts_len-3, verts_len-2, verts_len-4])
+			#faces.append([verts_len-3, verts_len-1, verts_len-2])
+			faces.append([verts_len-4, verts_len-2, verts_len-1])
+			faces.append([verts_len-4, verts_len-3, verts_len-2])
+#			faces.append([base_vertex_index + 1, base_vertex_index + 2, base_vertex_index + 4])
+#			faces.append([base_vertex_index + 1, base_vertex_index + 4, base_vertex_index + 3])
+#			
+			# remove the first 2 verts for the next time
+			tile_verts.pop_front()
+			tile_verts.pop_front()
+			
+#
+#	for tile_index in range(len(tiles)):
+#		var tile = tiles[tile_index]
+#		var x = tile.x
+#		var y = tile.y
+#
+#		# make the first triangle
+#		var position = Vector3(x * tile_size, floor_y, y * tile_size)
+#		# -0.5,  0.0,  0.5 = bottom left
+#		#  0.5,  0.0,  0.5 = bottom right
+#		# -0.5,  0.0, -0.5 = top left
+#		#  0.5,  0.0,  0.5 = top right
+#		var vertex_1 = position + Vector3(tile_vertices[0])
+#		var vertex_2 = position + Vector3(tile_vertices[3])
+#
+#		if tile.tile_type == TileType.FLOOR:
+#			# Add vertices, normals, and UVs for a floor tile
+#			for i in range(4):
+#				vertices.append(tile_vertices[i] + Vector3(x * tile_size, floor_y, -y * tile_size))
+#				normals.append(tile_normal)
+#				uvs.append(tile_uvs[i])
+#			# Define faces for a floor tile (two triangles)
+#			var base_vertex_index = (y * 3 + x) * 4
+#			faces.append([base_vertex_index + 1, base_vertex_index + 2, base_vertex_index + 4])
+#			faces.append([base_vertex_index + 1, base_vertex_index + 4, base_vertex_index + 3])
+#		elif tile.tile_type == TileType.WALL:
+#				# Generate OBJ data for a wall tile (a simple square)
+#				var base_vertex_index = (y * 3 + x) * 4
+#				for i in range(4):
+#					vertices.append(tile_vertices[i] + Vector3(x * tile_size, wall_y, -y * tile_size))
+#					normals.append(tile_normal)
+#					uvs.append(tile_uvs[i])
+#				faces.append([base_vertex_index + 1, base_vertex_index + 2, base_vertex_index + 4])
+#				faces.append([base_vertex_index + 1, base_vertex_index + 4, base_vertex_index + 3])
+#		# make note of the faces for the tile
+#		faces_by_tile[tile_index] = [faces[len(faces)-1], faces[len(faces)-2]]
+#	push_warning(faces_by_tile)
 	
 	write_obj_file("output.obj", vertices, normals, uvs, faces)
 	var surface_array = []
