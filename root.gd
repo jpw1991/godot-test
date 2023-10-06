@@ -50,33 +50,43 @@ func generate_obj():
 		var tile_verts = []
 		for column in row:
 			var position = Vector3(column.x, floor_y, -column.y)
-			
-			vertices.append(position + TOP_LEFT)
-			tile_verts.append(len(vertices))
-			#normals.append(Vector3.UP)
-			uvs.append(Vector2(0.0, 0.0))
-			
+#			o Plane
+#			v -1.000000 0.000000 1.000000 BOTTOM_LEFT
+#			v 1.000000 0.000000 1.000000 BOTTOM_RIGHT
+#			v -1.000000 0.000000 -1.000000 TOP_LEFT
+#			v 1.000000 0.000000 -1.000000 TOP_RIGHT
+#			vn -0.0000 1.0000 -0.0000
+#			vt 0.000000 0.000000
+#			vt 1.000000 0.000000
+#			vt 1.000000 1.000000
+#			vt 0.000000 1.000000
+#			s 0
+#			f 1/1/1 2/2/1 4/3/1 3/4/1
 			vertices.append(position + BOTTOM_LEFT)
 			tile_verts.append(len(vertices))
-			#normals.append(Vector3.UP)
-			uvs.append(Vector2(0.0, 1.0))
+			uvs.append(Vector2(0.0, 0.0))
+			
+			vertices.append(position + BOTTOM_RIGHT)
+			tile_verts.append(len(vertices))
+			uvs.append(Vector2(1.0, 0.0))
 			
 			if len(tile_verts) < 4:
+				vertices.append(position + TOP_LEFT)
+				tile_verts.append(len(vertices))
+				uvs.append(Vector2(1.0, 1.0))
+				
 				vertices.append(position + TOP_RIGHT)
 				tile_verts.append(len(vertices))
-				#normals.append(Vector3.UP)
-				uvs.append(Vector2(1.0, 0.0))
-				
-				vertices.append(position + BOTTOM_RIGHT)
-				tile_verts.append(len(vertices))
-				#normals.append(Vector3.UP)
-				uvs.append(Vector2(1.0, 1.0))
+				uvs.append(Vector2(0.0, 1.0))
 			normals.append(Vector3.UP)
 			# create the faces
 			# faces must be created counter-clockwise
+			# f 1/1/1 2/2/1 4/3/1 3/4/1
 			var verts_len = len(vertices)
-			faces.append([tile_verts[0], tile_verts[2], tile_verts[1]])
-			faces.append([tile_verts[0], tile_verts[3], tile_verts[1]])
+			faces.append([tile_verts[0], tile_verts[0], tile_verts[0]])
+			faces.append([tile_verts[1], tile_verts[1], tile_verts[0]])
+			faces.append([tile_verts[3], tile_verts[2], tile_verts[0]])
+			faces.append([tile_verts[2], tile_verts[3], tile_verts[0]])
 #			
 			# remove the first 2 verts for the next time
 			tile_verts.pop_front()
