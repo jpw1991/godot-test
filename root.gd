@@ -1,5 +1,5 @@
 extends Node
-
+ 
 enum TileType {
 	NOTHING,
 	STONE,
@@ -10,90 +10,198 @@ enum TileType {
 	STAIRS_DOWN,
 	PLAYER_START_POSITION,
 }
-
+ 
 class Tile:
 	# An individual tile
 	var x : int
 	var y : int
 	var tile_type : TileType
-
+ 
 	func _init(tile_x, tile_y, type):
 		self.x = tile_x
 		self.y = tile_y
 		self.tile_type = type
-
+ 
+	func height():
+		match self.tile_type:
+			TileType.WALL:
+				return 1
+			_:
+				return 0
+ 
+ 
 func generate_obj():
 	var vertices = []
 	var normals = []
 	var uvs = []
 	var faces = []
-	
-	var floor_y = 0
-	var wall_y = 1
-	
+ 
 	var tiles = [
-		[Tile.new(0,0,TileType.WALL)]
-#		[Tile.new(0,0,TileType.WALL),Tile.new(1,0,TileType.WALL)],
-#		[Tile.new(0,0,TileType.WALL),Tile.new(1,0,TileType.WALL),Tile.new(2,0,TileType.WALL)],
-#		[Tile.new(0,1,TileType.WALL),Tile.new(1,1,TileType.FLOOR),Tile.new(2,1,TileType.WALL)],
-#		[Tile.new(2,0,TileType.WALL),Tile.new(1,2,TileType.WALL),Tile.new(2,2,TileType.WALL)],
+		[Tile.new(0,0,TileType.WALL),Tile.new(1,0,TileType.WALL),Tile.new(2,0,TileType.WALL)],
+		[Tile.new(0,1,TileType.WALL),Tile.new(1,1,TileType.FLOOR),Tile.new(2,1,TileType.WALL)],
+		[Tile.new(0,2,TileType.WALL),Tile.new(1,2,TileType.WALL),Tile.new(2,2,TileType.WALL)],
+		[Tile.new(0,3,TileType.FLOOR),Tile.new(1,3,TileType.FLOOR),Tile.new(2,3,TileType.FLOOR)],
 		]
-	
-	var faces_by_tile = {}
-	
-	const BOTTOM_LEFT = Vector3(-1, 0, 1)
-	const BOTTOM_RIGHT = Vector3(1, 0, 1)
-	const TOP_LEFT = Vector3(-1, 0, -1)
-	const TOP_RIGHT = Vector3(1, 0, -1)
-	
-	for row in tiles:
-		var tile_verts = []
-		for column in row:
-			var position = Vector3(column.x, floor_y, -column.y)
-#			o Plane
-#			v -1.000000 0.000000 1.000000 BOTTOM_LEFT
-#			v 1.000000 0.000000 1.000000 BOTTOM_RIGHT
-#			v -1.000000 0.000000 -1.000000 TOP_LEFT
-#			v 1.000000 0.000000 -1.000000 TOP_RIGHT
-#			vn -0.0000 1.0000 -0.0000
-#			vt 0.000000 0.000000
-#			vt 1.000000 0.000000
-#			vt 1.000000 1.000000
-#			vt 0.000000 1.000000
-#			s 0
-#			f 1/1/1 2/2/1 4/3/1 3/4/1
-			vertices.append(position + BOTTOM_LEFT)
-			tile_verts.append(len(vertices))
-			uvs.append(Vector2(0.0, 0.0))
-			
-			vertices.append(position + BOTTOM_RIGHT)
-			tile_verts.append(len(vertices))
-			uvs.append(Vector2(1.0, 0.0))
-			
-			if len(tile_verts) < 4:
-				vertices.append(position + TOP_LEFT)
-				tile_verts.append(len(vertices))
-				uvs.append(Vector2(1.0, 1.0))
-				
-				vertices.append(position + TOP_RIGHT)
-				tile_verts.append(len(vertices))
-				uvs.append(Vector2(0.0, 1.0))
+ 
+	const BOTTOM_LEFT = Vector3(0, 0, -1)
+	const BOTTOM_RIGHT = Vector3(1, 0, -1)
+	const TOP_LEFT = Vector3(0, 0, 0)
+	const TOP_RIGHT = Vector3(1, 0, 0)
+ 
+	for y in range(tiles.size()):
+		for x in range(tiles[y].size()):
+			var tile = tiles[y][x]
+ 
+			var face_indices = []
+ 
+			var position = Vector3(tile.x, tile.height(), -tile.y)
+ 
+			vertices.append(position + TOP_LEFT)
+			face_indices.append(len(vertices))
 			normals.append(Vector3.UP)
+			uvs.append(Vector2(0.0, 0.0))
+ 
+			vertices.append(position + BOTTOM_LEFT)
+			face_indices.append(len(vertices))
+			normals.append(Vector3.UP)
+			uvs.append(Vector2(0.0, 1.0))
+ 
+			vertices.append(position + TOP_RIGHT)
+			face_indices.append(len(vertices))
+			normals.append(Vector3.UP)
+			uvs.append(Vector2(1.0, 0.0))
+ 
+			vertices.append(position + BOTTOM_RIGHT)
+			face_indices.append(len(vertices))
+			normals.append(Vector3.UP)
+			uvs.append(Vector2(1.0, 1.0))
 			# create the faces
 			# faces must be created counter-clockwise
-			# f 1/1/1 2/2/1 4/3/1 3/4/1
-			var verts_len = len(vertices)
-			faces.append([tile_verts[0], tile_verts[0], tile_verts[0]])
-			faces.append([tile_verts[1], tile_verts[1], tile_verts[0]])
-			faces.append([tile_verts[3], tile_verts[2], tile_verts[0]])
-			faces.append([tile_verts[2], tile_verts[3], tile_verts[0]])
-#			
-			# remove the first 2 verts for the next time
-			tile_verts.pop_front()
-			tile_verts.pop_front()
-	
+			faces.append([face_indices[0], face_indices[2], face_indices[1]])
+			faces.append([face_indices[2], face_indices[3], face_indices[1]])
+ 
+			# West wall
+			if x == 0 or tiles[y][x-1].height() < tile.height():
+				face_indices = []
+ 
+				var min_height = 0 if x == 0 else tiles[y][x-1].height()
+				var max_height = tile.height()
+ 
+				vertices.append(Vector3(position.x, min_height, position.z))
+				face_indices.append(len(vertices))
+				normals.append(Vector3.LEFT)
+				uvs.append(Vector2(0, 0))
+ 
+				vertices.append(Vector3(position.x, min_height, position.z - 1))
+				face_indices.append(len(vertices))
+				normals.append(Vector3.LEFT)
+				uvs.append(Vector2(0, 1))
+ 
+				vertices.append(Vector3(position.x, max_height, position.z))
+				face_indices.append(len(vertices))
+				normals.append(Vector3.LEFT)
+				uvs.append(Vector2(1, 0))
+ 
+				vertices.append(Vector3(position.x, max_height, position.z - 1))
+				face_indices.append(len(vertices))
+				normals.append(Vector3.LEFT)
+				uvs.append(Vector2(1, 1))
+ 
+				faces.append([face_indices[2], face_indices[1], face_indices[0]])
+				faces.append([face_indices[2], face_indices[3], face_indices[1]])
+ 
+			# # East wall
+			if x == tiles[y].size() - 1 or tiles[y][x+1].height() < tile.height():
+				face_indices = []
+ 
+				var min_height = 0 if x == tiles[y].size() - 1 else tiles[y][x+1].height()
+				var max_height = tile.height()
+ 
+				vertices.append(Vector3(position.x + 1, min_height, position.z))
+				face_indices.append(len(vertices))
+				normals.append(Vector3.RIGHT)
+				uvs.append(Vector2(0, 0))
+ 
+				vertices.append(Vector3(position.x + 1, min_height, position.z - 1))
+				face_indices.append(len(vertices))
+				normals.append(Vector3.RIGHT)
+				uvs.append(Vector2(0, 1))
+ 
+				vertices.append(Vector3(position.x + 1, max_height, position.z))
+				face_indices.append(len(vertices))
+				normals.append(Vector3.RIGHT)
+				uvs.append(Vector2(1, 0))
+ 
+				vertices.append(Vector3(position.x + 1, max_height, position.z - 1))
+				face_indices.append(len(vertices))
+				normals.append(Vector3.RIGHT)
+				uvs.append(Vector2(1, 1))
+ 
+				faces.append([face_indices[0], face_indices[1], face_indices[2]])
+				faces.append([face_indices[1], face_indices[3], face_indices[2]])
+ 
+			# South wall
+			if y == 0 or tiles[y-1][x].height() < tile.height():
+				face_indices = []
+ 
+				var min_height = 0 if y == 0 else tiles[y-1][x].height()
+				var max_height = tile.height()
+ 
+				vertices.append(Vector3(position.x, min_height, position.z))
+				face_indices.append(len(vertices))
+				normals.append(Vector3.BACK)
+				uvs.append(Vector2(0, 0))
+ 
+				vertices.append(Vector3(position.x + 1, min_height, position.z))
+				face_indices.append(len(vertices))
+				normals.append(Vector3.BACK)
+				uvs.append(Vector2(0, 1))
+ 
+				vertices.append(Vector3(position.x, max_height, position.z))
+				face_indices.append(len(vertices))
+				normals.append(Vector3.BACK)
+				uvs.append(Vector2(1, 0))
+ 
+				vertices.append(Vector3(position.x + 1, max_height, position.z))
+				face_indices.append(len(vertices))
+				normals.append(Vector3.BACK)
+				uvs.append(Vector2(1, 1))
+ 
+				faces.append([face_indices[0], face_indices[1], face_indices[2]])
+				faces.append([face_indices[1], face_indices[3], face_indices[2]])
+ 
+			# North wall
+			if y == tiles.size()- 1 or tiles[y+1][x].height() < tile.height():
+				face_indices = []
+ 
+				var min_height = 0 if y == tiles.size() - 1 else tiles[y+1][x].height()
+				var max_height = tile.height()
+ 
+				vertices.append(Vector3(position.x, min_height, position.z - 1))
+				face_indices.append(len(vertices))
+				normals.append(Vector3.FORWARD)
+				uvs.append(Vector2(0, 0))
+ 
+				vertices.append(Vector3(position.x + 1, min_height, position.z - 1))
+				face_indices.append(len(vertices))
+				normals.append(Vector3.FORWARD)
+				uvs.append(Vector2(0, 1))
+ 
+				vertices.append(Vector3(position.x, max_height, position.z - 1))
+				face_indices.append(len(vertices))
+				normals.append(Vector3.FORWARD)
+				uvs.append(Vector2(1, 0))
+ 
+				vertices.append(Vector3(position.x + 1, max_height, position.z - 1))
+				face_indices.append(len(vertices))
+				normals.append(Vector3.FORWARD)
+				uvs.append(Vector2(1, 1))
+ 
+				faces.append([face_indices[2], face_indices[1], face_indices[0]])
+				faces.append([face_indices[2], face_indices[3], face_indices[1]])
+ 
 	write_obj_file("output.obj", vertices, normals, uvs, faces)
-
+ 
 func write_obj_file(filename, vertices, normals, uvs, faces):
 	var file = FileAccess.open("res://%s" % filename, FileAccess.WRITE)
 	file.store_line("o MapMesh")
@@ -104,11 +212,9 @@ func write_obj_file(filename, vertices, normals, uvs, faces):
 	for uv in uvs:
 		file.store_line("vt %.6f %.6f" % [uv.x, uv.y])
 	file.store_line("s 0")
-	var face_line = "f"
 	for face in faces:
-		face_line += " %d/%d/%d" % [face[0], face[1], face[2]]
-	file.store_line(face_line)
+		file.store_line("f %d %d %d" % [face[0], face[1], face[2]])
 	file.close()
-
+ 
 func _ready():
 	generate_obj()
