@@ -53,24 +53,25 @@ func generate_obj():
 			
 			vertices.append(position + TOP_LEFT)
 			tile_verts.append(len(vertices))
-			normals.append(Vector3.UP)
+			#normals.append(Vector3.UP)
 			uvs.append(Vector2(0.0, 0.0))
 			
 			vertices.append(position + BOTTOM_LEFT)
 			tile_verts.append(len(vertices))
-			normals.append(Vector3.UP)
+			#normals.append(Vector3.UP)
 			uvs.append(Vector2(0.0, 1.0))
 			
 			if len(tile_verts) < 4:
 				vertices.append(position + TOP_RIGHT)
 				tile_verts.append(len(vertices))
-				normals.append(Vector3.UP)
+				#normals.append(Vector3.UP)
 				uvs.append(Vector2(1.0, 0.0))
 				
 				vertices.append(position + BOTTOM_RIGHT)
 				tile_verts.append(len(vertices))
-				normals.append(Vector3.UP)
+				#normals.append(Vector3.UP)
 				uvs.append(Vector2(1.0, 1.0))
+			normals.append(Vector3.UP)
 			# create the faces
 			# faces must be created counter-clockwise
 			var verts_len = len(vertices)
@@ -93,8 +94,10 @@ func write_obj_file(filename, vertices, normals, uvs, faces):
 	for uv in uvs:
 		file.store_line("vt %.6f %.6f" % [uv.x, uv.y])
 	file.store_line("s 0")
+	var face_line = "f"
 	for face in faces:
-		file.store_line("f %d/%d/%d" % [face[0], face[1], face[2]])
+		face_line += " %d/%d/%d" % [face[0], face[1], face[2]]
+	file.store_line(face_line)
 	file.close()
 
 func _ready():
