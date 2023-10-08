@@ -55,11 +55,9 @@ func generate_surface_tool():
 	result.begin(Mesh.PRIMITIVE_TRIANGLES)
 	result.set_color(Color(1, 0, 0))
 	
-	var index_count = 0
 	for y in range(tiles_2d.size()):
 		for x in range(tiles_2d[y].size()):
 			var tile = tiles_2d[y][x]
-			var face_indices = []
 			var position = Vector3(tile.x, tile.height(), tile.y)
 			
 			# to do: order should be top left, top right, bottom left, bottom right
@@ -71,7 +69,6 @@ func generate_surface_tool():
 			
 			# West wall
 			if x == 0 or tiles_2d[y][x-1].height() < tile.height():
-				face_indices = []
 				
 				var min_height = 0 if x == 0 else tiles_2d[y][x-1].height()
 				var max_height = tile.height()
@@ -85,7 +82,6 @@ func generate_surface_tool():
 				
 			# East wall
 			if x == tiles_2d[y].size() - 1 or tiles_2d[y][x+1].height() < tile.height():
-				face_indices = []
 				
 				var min_height = 0 if x == tiles_2d[y].size() - 1 else tiles_2d[y][x+1].height()
 				var max_height = tile.height()
@@ -99,7 +95,6 @@ func generate_surface_tool():
 				
 			# South wall
 			if y == 0 or tiles_2d[y-1][x].height() < tile.height():
-				face_indices = []
 				
 				var min_height = 0 if y == 0 else tiles_2d[y-1][x].height()
 				var max_height = tile.height()
@@ -113,7 +108,6 @@ func generate_surface_tool():
 				
 			# North wall
 			if y == tiles_2d.size()- 1 or tiles_2d[y+1][x].height() < tile.height():
-				face_indices = []
 				
 				var min_height = 0 if y == tiles_2d.size() - 1 else tiles_2d[y+1][x].height()
 				var max_height = tile.height()
@@ -140,17 +134,10 @@ func generate_obj():
 		[Tile.new(0,3,TileType.FLOOR),Tile.new(1,3,TileType.FLOOR),Tile.new(2,3,TileType.FLOOR)],
 		]
  
-	const BOTTOM_LEFT = Vector3(0, 0, -1)
-	const BOTTOM_RIGHT = Vector3(1, 0, -1)
-	const TOP_LEFT = Vector3(0, 0, 0)
-	const TOP_RIGHT = Vector3(1, 0, 0)
- 
 	for y in range(tiles.size()):
 		for x in range(tiles[y].size()):
 			var tile = tiles[y][x]
- 
 			var face_indices = []
- 
 			var position = Vector3(tile.x, tile.height(), -tile.y)
  
 			vertices.append(position + TOP_LEFT)
