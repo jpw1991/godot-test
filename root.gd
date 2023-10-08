@@ -60,39 +60,14 @@ func generate_surface_tool():
 		for x in range(tiles_2d[y].size()):
 			var tile = tiles_2d[y][x]
 			var face_indices = []
-			var position = Vector3(tile.x, tile.height(), -tile.y)
-			
-#			#result.set_normal(Vector3.UP)
-#			result.set_uv(TOP_LEFT_UV)
-#			result.add_vertex(position + TOP_LEFT)
-#			#result.add_index(++index_count)
-#
-#			#result.set_normal(Vector3.UP)
-#			result.set_uv(TOP_RIGHT_UV)
-#			result.add_vertex(position + TOP_RIGHT)
-#			#result.add_index(++index_count)
-#
-#			#result.set_normal(Vector3.UP)
-#			result.set_uv(BOTTOM_RIGHT_UV)
-#			result.add_vertex(position + BOTTOM_RIGHT)
-#			#result.add_index(++index_count)
-#
-#			#result.set_normal(Vector3.UP)
-#			result.set_uv(BOTTOM_LEFT_UV)
-#			result.add_vertex(position + BOTTOM_LEFT)
-#			#result.add_index(++index_count)
+			var position = Vector3(tile.x, tile.height(), tile.y)
 			
 			# to do: order should be top left, top right, bottom left, bottom right
 			
 			result.add_triangle_fan([position + TOP_LEFT, position + TOP_RIGHT,
-				position + BOTTOM_RIGHT, position + BOTTOM_LEFT],
-				[TOP_LEFT_UV, TOP_RIGHT_UV, BOTTOM_RIGHT_UV, BOTTOM_LEFT_UV],
+				position + BOTTOM_LEFT, position + BOTTOM_RIGHT],
+				[TOP_LEFT_UV, TOP_RIGHT_UV, BOTTOM_LEFT_UV, BOTTOM_RIGHT_UV],
 				[], [], [Vector3.UP, Vector3.UP, Vector3.UP, Vector3.UP])
-			
-			# create the faces
-			# faces must be created counter-clockwise
-#			faces.append([face_indices[0], face_indices[2], face_indices[1]])
-#			faces.append([face_indices[2], face_indices[3], face_indices[1]])
 			
 			# West wall
 			if x == 0 or tiles_2d[y][x-1].height() < tile.height():
@@ -103,35 +78,10 @@ func generate_surface_tool():
 				
 				result.add_triangle_fan([Vector3(position.x, min_height, position.z),
 					Vector3(position.x, max_height, position.z),
-					Vector3(position.x, max_height, position.z - 1),
-					Vector3(position.x, min_height, position.z - 1)],
-					[TOP_LEFT_UV, TOP_RIGHT_UV, BOTTOM_RIGHT_UV, BOTTOM_LEFT_UV],
+					Vector3(position.x, min_height, position.z - 1),
+					Vector3(position.x, max_height, position.z - 1)],
+					[TOP_LEFT_UV, TOP_RIGHT_UV, BOTTOM_LEFT_UV, BOTTOM_RIGHT_UV],
 				[], [], [Vector3.LEFT, Vector3.LEFT, Vector3.LEFT, Vector3.LEFT])
-				
-#				#result.set_normal(Vector3.LEFT)
-#				result.set_uv(TOP_LEFT_UV)
-#				result.add_vertex(Vector3(position.x, min_height, position.z))
-#				#result.add_index(++index_count)
-#
-#				#result.set_normal(Vector3.LEFT)
-#				result.set_uv(TOP_RIGHT_UV)
-#				result.add_vertex(Vector3(position.x, max_height, position.z))
-#				#result.add_index(++index_count)
-#
-#				#result.set_normal(Vector3.LEFT)
-#				result.set_uv(BOTTOM_RIGHT_UV)
-#				result.add_vertex(Vector3(position.x, max_height, position.z - 1))
-#				#result.add_index(++index_count)
-#
-#				#result.set_normal(Vector3.LEFT)
-#				result.set_uv(BOTTOM_LEFT_UV)
-#				result.add_vertex(Vector3(position.x, min_height, position.z - 1))
-#				#result.add_index(++index_count)
-				
-				
-					
-#				faces.append([face_indices[2], face_indices[1], face_indices[0]])
-#				faces.append([face_indices[2], face_indices[3], face_indices[1]])
 				
 			# East wall
 			if x == tiles_2d[y].size() - 1 or tiles_2d[y][x+1].height() < tile.height():
@@ -142,37 +92,10 @@ func generate_surface_tool():
 				
 				result.add_triangle_fan([Vector3(position.x + 1, min_height, position.z),
 					Vector3(position.x + 1, max_height, position.z),
-					Vector3(position.x + 1, max_height, position.z - 1),
-					Vector3(position.x + 1, min_height, position.z - 1)],
-					[TOP_LEFT_UV, TOP_RIGHT_UV, BOTTOM_RIGHT_UV, BOTTOM_LEFT_UV],
+					Vector3(position.x + 1, min_height, position.z - 1),
+					Vector3(position.x + 1, max_height, position.z - 1)],
+					[TOP_LEFT_UV, TOP_RIGHT_UV, BOTTOM_LEFT_UV, BOTTOM_RIGHT_UV],
 				[], [], [Vector3.RIGHT, Vector3.RIGHT, Vector3.RIGHT, Vector3.RIGHT])
-				
-#				#result.set_normal(Vector3.RIGHT)
-#				result.set_uv(TOP_LEFT_UV)
-#				result.add_vertex(Vector3(position.x + 1, min_height, position.z))
-#				#result.add_index(++index_count)
-#
-#				#result.set_normal(Vector3.RIGHT)
-#				result.set_uv(TOP_RIGHT_UV)
-#				result.add_vertex(Vector3(position.x + 1, max_height, position.z))
-#				#result.add_index(++index_count)
-#
-#				#result.set_normal(Vector3.RIGHT)
-#				result.set_uv(BOTTOM_RIGHT_UV)
-#				result.add_vertex(Vector3(position.x + 1, max_height, position.z - 1))
-#				#result.add_index(++index_count)
-#
-#				#result.set_normal(Vector3.RIGHT)
-#				result.set_uv(BOTTOM_LEFT_UV)
-#				result.add_vertex(Vector3(position.x + 1, min_height, position.z - 1))
-#				#result.add_index(++index_count)
-				
-				
-				
-				
-				
-#				faces.append([face_indices[0], face_indices[1], face_indices[2]])
-#				faces.append([face_indices[1], face_indices[3], face_indices[2]])
 				
 			# South wall
 			if y == 0 or tiles_2d[y-1][x].height() < tile.height():
@@ -183,37 +106,10 @@ func generate_surface_tool():
 				
 				result.add_triangle_fan([Vector3(position.x, min_height, position.z),
 					Vector3(position.x, max_height, position.z),
-					Vector3(position.x + 1, max_height, position.z),
-					Vector3(position.x + 1, min_height, position.z)],
-					[TOP_LEFT_UV, TOP_RIGHT_UV, BOTTOM_RIGHT_UV, BOTTOM_LEFT_UV],
+					Vector3(position.x + 1, min_height, position.z),
+					Vector3(position.x + 1, max_height, position.z)],
+					[TOP_LEFT_UV, TOP_RIGHT_UV, BOTTOM_LEFT_UV, BOTTOM_RIGHT_UV],
 				[], [], [Vector3.BACK, Vector3.BACK, Vector3.BACK, Vector3.BACK])
-					
-#				#result.set_normal(Vector3.BACK)
-#				result.set_uv(TOP_LEFT_UV)
-#				result.add_vertex(Vector3(position.x, min_height, position.z))
-#				#result.add_index(++index_count)
-#
-#				#result.set_normal(Vector3.BACK)
-#				result.set_uv(TOP_RIGHT_UV)
-#				result.add_vertex(Vector3(position.x, max_height, position.z))
-#				#result.add_index(++index_count)
-#
-#				#result.set_normal(Vector3.BACK)
-#				result.set_uv(BOTTOM_RIGHT_UV)
-#				result.add_vertex(Vector3(position.x + 1, max_height, position.z))
-#				#result.add_index(++index_count)
-#
-#				#result.set_normal(Vector3.BACK)
-#				result.set_uv(BOTTOM_LEFT_UV)
-#				result.add_vertex(Vector3(position.x + 1, min_height, position.z))
-#				#result.add_index(++index_count)
-				
-				
-				
-				
-				
-#				faces.append([face_indices[0], face_indices[1], face_indices[2]])
-#				faces.append([face_indices[1], face_indices[3], face_indices[2]])
 				
 			# North wall
 			if y == tiles_2d.size()- 1 or tiles_2d[y+1][x].height() < tile.height():
@@ -224,37 +120,10 @@ func generate_surface_tool():
 				
 				result.add_triangle_fan([Vector3(position.x, min_height, position.z - 1),
 					Vector3(position.x, max_height, position.z - 1),
-					Vector3(position.x + 1, max_height, position.z - 1),
-					Vector3(position.x + 1, min_height, position.z - 1)],
-					[TOP_LEFT_UV, TOP_RIGHT_UV, BOTTOM_RIGHT_UV, BOTTOM_LEFT_UV],
+					Vector3(position.x + 1, min_height, position.z - 1),
+					Vector3(position.x + 1, max_height, position.z - 1)],
+					[TOP_LEFT_UV, TOP_RIGHT_UV, BOTTOM_LEFT_UV, BOTTOM_RIGHT_UV],
 				[], [], [Vector3.FORWARD, Vector3.FORWARD, Vector3.FORWARD, Vector3.FORWARD])
-				
-#				#result.set_normal(Vector3.FORWARD)
-#				result.set_uv(TOP_LEFT_UV)
-#				result.add_vertex(Vector3(position.x, min_height, position.z - 1))
-#				#result.add_index(++index_count)
-#
-#				#result.set_normal(Vector3.FORWARD)
-#				result.set_uv(TOP_RIGHT_UV)
-#				result.add_vertex(Vector3(position.x, max_height, position.z - 1))
-#				#result.add_index(++index_count)
-#
-#				#result.set_normal(Vector3.FORWARD)
-#				result.set_uv(BOTTOM_RIGHT_UV)
-#				result.add_vertex(Vector3(position.x + 1, max_height, position.z - 1))
-#				#result.add_index(++index_count)
-#
-#				#result.set_normal(Vector3.FORWARD)
-#				result.set_uv(BOTTOM_LEFT_UV)
-#				result.add_vertex(Vector3(position.x + 1, min_height, position.z - 1))
-#				#result.add_index(++index_count)
-				
-				
-				
-				
-				
-#				faces.append([face_indices[2], face_indices[1], face_indices[0]])
-#				faces.append([face_indices[2], face_indices[3], face_indices[1]])
 	
 	return result
  
@@ -457,8 +326,8 @@ func _ready():
 	mesh_instance.mesh = mesh
 	add_child(mesh_instance)
 
-func _process(delta):
-	timer += delta
-	if timer >= interval:
-		mesh_instance.rotate_y(1)
-		timer = 0.0
+#func _process(delta):
+#	timer += delta
+#	if timer >= interval:
+#		mesh_instance.rotate_y(1)
+#		timer = 0.0
