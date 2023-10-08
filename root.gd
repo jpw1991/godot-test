@@ -60,11 +60,11 @@ func generate_surface_tool():
 			var tile = tiles_2d[y][x]
 			var position = Vector3(tile.x, tile.height(), tile.y)
 			
-			# to do: order should be top left, top right, bottom left, bottom right
+			# order should be counter-clockwise
 			
-			result.add_triangle_fan([position + TOP_LEFT, position + TOP_RIGHT,
-				position + BOTTOM_LEFT, position + BOTTOM_RIGHT],
-				[TOP_LEFT_UV, TOP_RIGHT_UV, BOTTOM_LEFT_UV, BOTTOM_RIGHT_UV],
+			result.add_triangle_fan([position + BOTTOM_LEFT, position + BOTTOM_RIGHT,
+				position + TOP_RIGHT, position + TOP_LEFT],
+				[BOTTOM_LEFT_UV, BOTTOM_RIGHT_UV, TOP_RIGHT_UV, TOP_LEFT_UV],
 				[], [], [Vector3.UP, Vector3.UP, Vector3.UP, Vector3.UP])
 			
 			# West wall
@@ -74,11 +74,16 @@ func generate_surface_tool():
 				var max_height = tile.height()
 				
 				result.add_triangle_fan([Vector3(position.x, min_height, position.z),
-					Vector3(position.x, max_height, position.z),
 					Vector3(position.x, min_height, position.z - 1),
+					Vector3(position.x, max_height, position.z),
 					Vector3(position.x, max_height, position.z - 1)],
-					[TOP_LEFT_UV, TOP_RIGHT_UV, BOTTOM_LEFT_UV, BOTTOM_RIGHT_UV],
+					[BOTTOM_LEFT_UV, BOTTOM_RIGHT_UV, TOP_RIGHT_UV, TOP_LEFT_UV],
 				[], [], [Vector3.LEFT, Vector3.LEFT, Vector3.LEFT, Vector3.LEFT])
+				
+#				vertices.append(Vector3(position.x, min_height, position.z))
+#				vertices.append(Vector3(position.x, min_height, position.z - 1))
+#				vertices.append(Vector3(position.x, max_height, position.z))
+#				vertices.append(Vector3(position.x, max_height, position.z - 1))
 				
 			# East wall
 			if x == tiles_2d[y].size() - 1 or tiles_2d[y][x+1].height() < tile.height():
@@ -87,11 +92,16 @@ func generate_surface_tool():
 				var max_height = tile.height()
 				
 				result.add_triangle_fan([Vector3(position.x + 1, min_height, position.z),
-					Vector3(position.x + 1, max_height, position.z),
 					Vector3(position.x + 1, min_height, position.z - 1),
+					Vector3(position.x + 1, max_height, position.z),
 					Vector3(position.x + 1, max_height, position.z - 1)],
-					[TOP_LEFT_UV, TOP_RIGHT_UV, BOTTOM_LEFT_UV, BOTTOM_RIGHT_UV],
+					[BOTTOM_LEFT_UV, BOTTOM_RIGHT_UV, TOP_RIGHT_UV, TOP_LEFT_UV],
 				[], [], [Vector3.RIGHT, Vector3.RIGHT, Vector3.RIGHT, Vector3.RIGHT])
+				
+#				vertices.append(Vector3(position.x + 1, min_height, position.z))
+#				vertices.append(Vector3(position.x + 1, min_height, position.z - 1))
+#				vertices.append(Vector3(position.x + 1, max_height, position.z))
+#				vertices.append(Vector3(position.x + 1, max_height, position.z - 1))
 				
 			# South wall
 			if y == 0 or tiles_2d[y-1][x].height() < tile.height():
@@ -100,11 +110,16 @@ func generate_surface_tool():
 				var max_height = tile.height()
 				
 				result.add_triangle_fan([Vector3(position.x, min_height, position.z),
-					Vector3(position.x, max_height, position.z),
 					Vector3(position.x + 1, min_height, position.z),
+					Vector3(position.x, max_height, position.z),
 					Vector3(position.x + 1, max_height, position.z)],
-					[TOP_LEFT_UV, TOP_RIGHT_UV, BOTTOM_LEFT_UV, BOTTOM_RIGHT_UV],
+					[BOTTOM_LEFT_UV, BOTTOM_RIGHT_UV, TOP_RIGHT_UV, TOP_LEFT_UV],
 				[], [], [Vector3.BACK, Vector3.BACK, Vector3.BACK, Vector3.BACK])
+				
+#				vertices.append(Vector3(position.x, min_height, position.z))
+#				vertices.append(Vector3(position.x + 1, min_height, position.z))
+#				vertices.append(Vector3(position.x, max_height, position.z))
+#				vertices.append(Vector3(position.x + 1, max_height, position.z))
 				
 			# North wall
 			if y == tiles_2d.size()- 1 or tiles_2d[y+1][x].height() < tile.height():
@@ -113,11 +128,16 @@ func generate_surface_tool():
 				var max_height = tile.height()
 				
 				result.add_triangle_fan([Vector3(position.x, min_height, position.z - 1),
-					Vector3(position.x, max_height, position.z - 1),
 					Vector3(position.x + 1, min_height, position.z - 1),
+					Vector3(position.x, max_height, position.z - 1),
 					Vector3(position.x + 1, max_height, position.z - 1)],
-					[TOP_LEFT_UV, TOP_RIGHT_UV, BOTTOM_LEFT_UV, BOTTOM_RIGHT_UV],
+					[BOTTOM_LEFT_UV, BOTTOM_RIGHT_UV, TOP_RIGHT_UV, TOP_LEFT_UV],
 				[], [], [Vector3.FORWARD, Vector3.FORWARD, Vector3.FORWARD, Vector3.FORWARD])
+				
+#				vertices.append(Vector3(position.x, min_height, position.z - 1))
+#				vertices.append(Vector3(position.x + 1, min_height, position.z - 1))
+#				vertices.append(Vector3(position.x, max_height, position.z - 1))
+#				vertices.append(Vector3(position.x + 1, max_height, position.z - 1))
 	
 	return result
  
