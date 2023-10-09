@@ -46,11 +46,14 @@ class Tile:
 
 func generate_surface_tool():
 	var tiles_2d = [
-		[Tile.new(0,0,TileType.WALL),Tile.new(1,0,TileType.WALL),Tile.new(2,0,TileType.WALL)],
-		[Tile.new(0,1,TileType.WALL),Tile.new(1,1,TileType.FLOOR),Tile.new(2,1,TileType.WALL)],
-		[Tile.new(0,2,TileType.WALL),Tile.new(1,2,TileType.WALL),Tile.new(2,2,TileType.WALL)],
-		[Tile.new(0,3,TileType.FLOOR),Tile.new(1,3,TileType.FLOOR),Tile.new(2,3,TileType.FLOOR)],
+		[Tile.new(0,0,TileType.WALL)],
 		]
+#	var tiles_2d = [
+#		[Tile.new(0,0,TileType.WALL),Tile.new(1,0,TileType.WALL),Tile.new(2,0,TileType.WALL)],
+#		[Tile.new(0,1,TileType.WALL),Tile.new(1,1,TileType.FLOOR),Tile.new(2,1,TileType.WALL)],
+#		[Tile.new(0,2,TileType.WALL),Tile.new(1,2,TileType.WALL),Tile.new(2,2,TileType.WALL)],
+#		[Tile.new(0,3,TileType.FLOOR),Tile.new(1,3,TileType.FLOOR),Tile.new(2,3,TileType.FLOOR)],
+#		]
 	var result = SurfaceTool.new()
 	result.begin(Mesh.PRIMITIVE_TRIANGLES)
 	result.set_color(Color(1, 0, 0))
@@ -75,8 +78,8 @@ func generate_surface_tool():
 				
 				result.add_triangle_fan([Vector3(position.x, min_height, position.z),
 					Vector3(position.x, min_height, position.z - 1),
-					Vector3(position.x, max_height, position.z),
-					Vector3(position.x, max_height, position.z - 1)],
+					Vector3(position.x, max_height, position.z - 1),
+					Vector3(position.x, max_height, position.z)],
 					[BOTTOM_LEFT_UV, BOTTOM_RIGHT_UV, TOP_RIGHT_UV, TOP_LEFT_UV],
 				[], [], [Vector3.LEFT, Vector3.LEFT, Vector3.LEFT, Vector3.LEFT])
 				
