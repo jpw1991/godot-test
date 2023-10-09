@@ -61,7 +61,7 @@ func generate_surface_tool():
 	for y in range(tiles_2d.size()):
 		for x in range(tiles_2d[y].size()):
 			var tile = tiles_2d[y][x]
-			var position = Vector3(tile.x, tile.height(), tile.y)
+			var position = Vector3(tile.x, tile.height(), -tile.y)
 			
 			var flat_verts = [position + BOTTOM_LEFT, position + BOTTOM_RIGHT,
 				position + TOP_RIGHT, position + TOP_LEFT]
