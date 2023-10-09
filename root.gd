@@ -83,11 +83,6 @@ func generate_surface_tool():
 					#[BOTTOM_LEFT_UV, BOTTOM_RIGHT_UV, TOP_RIGHT_UV, TOP_LEFT_UV],
 				#[], [], [Vector3.LEFT, Vector3.LEFT, Vector3.LEFT, Vector3.LEFT])
 				
-#				vertices.append(Vector3(position.x, min_height, position.z))
-#				vertices.append(Vector3(position.x, min_height, position.z - 1))
-#				vertices.append(Vector3(position.x, max_height, position.z))
-#				vertices.append(Vector3(position.x, max_height, position.z - 1))
-				
 			# East wall
 			if x == tiles_2d[y].size() - 1 or tiles_2d[y][x+1].height() < tile.height():
 				
@@ -102,11 +97,6 @@ func generate_surface_tool():
 					##[BOTTOM_RIGHT_UV, BOTTOM_LEFT_UV, TOP_LEFT_UV, TOP_RIGHT_UV],
 				#[], [], [Vector3.RIGHT, Vector3.RIGHT, Vector3.RIGHT, Vector3.RIGHT])
 				
-#				vertices.append(Vector3(position.x + 1, min_height, position.z))
-#				vertices.append(Vector3(position.x + 1, min_height, position.z - 1))
-#				vertices.append(Vector3(position.x + 1, max_height, position.z))
-#				vertices.append(Vector3(position.x + 1, max_height, position.z - 1))
-				
 			# South wall
 			if y == 0 or tiles_2d[y-1][x].height() < tile.height():
 				
@@ -120,11 +110,6 @@ func generate_surface_tool():
 					#[BOTTOM_LEFT_UV, BOTTOM_RIGHT_UV, TOP_RIGHT_UV, TOP_LEFT_UV],
 				#[], [], [Vector3.BACK, Vector3.BACK, Vector3.BACK, Vector3.BACK])
 				
-#				vertices.append(Vector3(position.x, min_height, position.z))
-#				vertices.append(Vector3(position.x + 1, min_height, position.z))
-#				vertices.append(Vector3(position.x, max_height, position.z))
-#				vertices.append(Vector3(position.x + 1, max_height, position.z))
-				
 			# North wall
 			if y == tiles_2d.size()- 1 or tiles_2d[y+1][x].height() < tile.height():
 				
@@ -137,11 +122,6 @@ func generate_surface_tool():
 					Vector3(position.x, max_height, position.z - 1)])#,
 					#[BOTTOM_LEFT_UV, BOTTOM_RIGHT_UV, TOP_RIGHT_UV, TOP_LEFT_UV],
 				#[], [], [Vector3.FORWARD, Vector3.FORWARD, Vector3.FORWARD, Vector3.FORWARD])
-				
-#				vertices.append(Vector3(position.x, min_height, position.z - 1))
-#				vertices.append(Vector3(position.x + 1, min_height, position.z - 1))
-#				vertices.append(Vector3(position.x, max_height, position.z - 1))
-#				vertices.append(Vector3(position.x + 1, max_height, position.z - 1))
 	
 	return result
  
