@@ -56,12 +56,11 @@ func generate_surface_tool():
 		]
 	var result = SurfaceTool.new()
 	result.begin(Mesh.PRIMITIVE_TRIANGLES)
-	#result.set_color(Color(1, 0, 0))
 	
 	for y in range(tiles_2d.size()):
 		for x in range(tiles_2d[y].size()):
 			var tile = tiles_2d[y][x]
-			var position = Vector3(tile.x, tile.height(), -tile.y)
+			var position = Vector3(tile.x, tile.height(), tile.y)
 			
 			var flat_verts = [position + BOTTOM_LEFT, position + BOTTOM_RIGHT,
 				position + TOP_RIGHT, position + TOP_LEFT]
@@ -99,14 +98,14 @@ func generate_surface_tool():
 				var min_height = 0 if y == 0 else tiles_2d[y-1][x].height()
 				var max_height = tile.height()
 				
-				var south_wall_verts = [Vector3(position.x, min_height, position.z),
-					Vector3(position.x + 1, min_height, position.z),
-					Vector3(position.x + 1, max_height, position.z),
-					Vector3(position.x, max_height, position.z)]
-				south_wall_verts.reverse()
+				var south_wall_verts = [Vector3(position.x, min_height, position.z - 1),
+					Vector3(position.x + 1, min_height, position.z - 1),
+					Vector3(position.x + 1, max_height, position.z - 1),
+					Vector3(position.x, max_height, position.z - 1)]
+				
 				var normals = [Vector3.BACK, Vector3.BACK, Vector3.BACK, Vector3.BACK]
 				
-				result.add_triangle_fan(south_wall_verts, [], [], [], normals)
+				result.add_triangle_fan(south_wall_verts)
 				
 			# North wall
 			if y == tiles_2d.size()- 1 or tiles_2d[y+1][x].height() < tile.height():
@@ -114,14 +113,12 @@ func generate_surface_tool():
 				var min_height = 0 if y == tiles_2d.size() - 1 else tiles_2d[y+1][x].height()
 				var max_height = tile.height()
 				
-				var north_wall_verts = [Vector3(position.x, max_height, position.z - 1),
-					Vector3(position.x + 1, max_height, position.z - 1),
-					Vector3(position.x + 1, min_height, position.z - 1),
-					Vector3(position.x, min_height, position.z - 1)]
-				north_wall_verts.reverse()
-				var normals = [Vector3.BACK, Vector3.BACK, Vector3.BACK, Vector3.BACK]
+				var north_wall_verts = [Vector3(position.x, max_height, position.z),
+					Vector3(position.x + 1, max_height, position.z),
+					Vector3(position.x + 1, min_height, position.z),
+					Vector3(position.x, min_height, position.z)]
 				
-				result.add_triangle_fan(north_wall_verts, [], [], [], normals)
+				result.add_triangle_fan(north_wall_verts)
 	
 	return result
  
@@ -309,8 +306,6 @@ func _ready():
 	var mesh = ArrayMesh.new()
 	
 	var surface_tool = generate_surface_tool()
-	#surface_tool.optimize_indices_for_cache()
-	#surface_tool.generate_normals(false)
 	surface_tool.commit(mesh)
 	
 	mesh_instance = MeshInstance3D.new()
