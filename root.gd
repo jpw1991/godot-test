@@ -63,14 +63,10 @@ func generate_surface_tool():
 			var tile = tiles_2d[y][x]
 			var position = Vector3(tile.x, tile.height(), tile.y)
 			
-			# order should be counter-clockwise
-			#void add_triangle_fan (
-			#	PackedVector3Array vertices,
-			#	PackedVector2Array uvs=PackedVector2Array(),
-			#	PackedColorArray colors=PackedColorArray(),
-			#	PackedVector2Array uv2s=PackedVector2Array(),
-			#	PackedVector3Array normals=PackedVector3Array(),
-			#	Plane[] tangents=[] )
+			# order should be counter-clockwise for flat, west, and north
+			# while clockwise for east and south. This determines the direction
+			# of the faces
+
 			result.add_triangle_fan([position + BOTTOM_LEFT, position + BOTTOM_RIGHT,
 				position + TOP_RIGHT, position + TOP_LEFT],
 				[BOTTOM_LEFT_UV, BOTTOM_RIGHT_UV, TOP_RIGHT_UV, TOP_LEFT_UV],
@@ -95,12 +91,6 @@ func generate_surface_tool():
 				var min_height = 0 if x == tiles_2d[y].size() - 1 else tiles_2d[y][x+1].height()
 				var max_height = tile.height()
 				
-#				result.add_triangle_fan([Vector3(position.x + 1, min_height, position.z),
-#					Vector3(position.x + 1, min_height, position.z - 1),
-#					Vector3(position.x + 1, max_height, position.z - 1),
-#					Vector3(position.x + 1, max_height, position.z)],
-#					[BOTTOM_LEFT_UV, BOTTOM_RIGHT_UV, TOP_RIGHT_UV, TOP_LEFT_UV],
-#					[], [], [Vector3.RIGHT, Vector3.RIGHT, Vector3.RIGHT, Vector3.RIGHT])
 				result.add_triangle_fan([Vector3(position.x + 1, max_height, position.z),
 					Vector3(position.x + 1, max_height, position.z - 1),
 					Vector3(position.x + 1, min_height, position.z - 1),
@@ -114,12 +104,6 @@ func generate_surface_tool():
 				var min_height = 0 if y == 0 else tiles_2d[y-1][x].height()
 				var max_height = tile.height()
 				
-#				result.add_triangle_fan([Vector3(position.x, min_height, position.z),
-#					Vector3(position.x + 1, min_height, position.z),
-#					Vector3(position.x + 1, max_height, position.z),
-#					Vector3(position.x, max_height, position.z)],
-#					[BOTTOM_LEFT_UV, BOTTOM_RIGHT_UV, TOP_RIGHT_UV, TOP_LEFT_UV],
-#					[], [], [Vector3.BACK, Vector3.BACK, Vector3.BACK, Vector3.BACK])
 				result.add_triangle_fan([Vector3(position.x, max_height, position.z),
 					Vector3(position.x + 1, max_height, position.z),
 					Vector3(position.x + 1, min_height, position.z),
