@@ -56,7 +56,7 @@ func generate_surface_tool():
 #		]
 	var result = SurfaceTool.new()
 	result.begin(Mesh.PRIMITIVE_TRIANGLES)
-	result.set_color(Color(1, 0, 0))
+	#result.set_color(Color(1, 0, 0))
 	
 	for y in range(tiles_2d.size()):
 		for x in range(tiles_2d[y].size()):
@@ -64,11 +64,17 @@ func generate_surface_tool():
 			var position = Vector3(tile.x, tile.height(), tile.y)
 			
 			# order should be counter-clockwise
-			
+			#void add_triangle_fan (
+			#	PackedVector3Array vertices,
+			#	PackedVector2Array uvs=PackedVector2Array(),
+			#	PackedColorArray colors=PackedColorArray(),
+			#	PackedVector2Array uv2s=PackedVector2Array(),
+			#	PackedVector3Array normals=PackedVector3Array(),
+			#	Plane[] tangents=[] )
 			result.add_triangle_fan([position + BOTTOM_LEFT, position + BOTTOM_RIGHT,
-				position + TOP_RIGHT, position + TOP_LEFT])#,
-				#[BOTTOM_LEFT_UV, BOTTOM_RIGHT_UV, TOP_RIGHT_UV, TOP_LEFT_UV],
-				#[], [], [Vector3.UP, Vector3.UP, Vector3.UP, Vector3.UP])
+				position + TOP_RIGHT, position + TOP_LEFT],
+				[BOTTOM_LEFT_UV, BOTTOM_RIGHT_UV, TOP_RIGHT_UV, TOP_LEFT_UV],
+				[], [], [Vector3.UP, Vector3.UP, Vector3.UP, Vector3.UP])
 			
 			# West wall
 			if x == 0 or tiles_2d[y][x-1].height() < tile.height():
@@ -79,9 +85,9 @@ func generate_surface_tool():
 				result.add_triangle_fan([Vector3(position.x, min_height, position.z),
 					Vector3(position.x, min_height, position.z - 1),
 					Vector3(position.x, max_height, position.z - 1),
-					Vector3(position.x, max_height, position.z)])#,
-					#[BOTTOM_LEFT_UV, BOTTOM_RIGHT_UV, TOP_RIGHT_UV, TOP_LEFT_UV],
-				#[], [], [Vector3.LEFT, Vector3.LEFT, Vector3.LEFT, Vector3.LEFT])
+					Vector3(position.x, max_height, position.z)],
+					[BOTTOM_LEFT_UV, BOTTOM_RIGHT_UV, TOP_RIGHT_UV, TOP_LEFT_UV],
+					[], [], [Vector3.LEFT, Vector3.LEFT, Vector3.LEFT, Vector3.LEFT])
 				
 			# East wall
 			if x == tiles_2d[y].size() - 1 or tiles_2d[y][x+1].height() < tile.height():
@@ -89,13 +95,18 @@ func generate_surface_tool():
 				var min_height = 0 if x == tiles_2d[y].size() - 1 else tiles_2d[y][x+1].height()
 				var max_height = tile.height()
 				
-				result.add_triangle_fan([Vector3(position.x + 1, min_height, position.z),
-					Vector3(position.x + 1, min_height, position.z - 1),
+#				result.add_triangle_fan([Vector3(position.x + 1, min_height, position.z),
+#					Vector3(position.x + 1, min_height, position.z - 1),
+#					Vector3(position.x + 1, max_height, position.z - 1),
+#					Vector3(position.x + 1, max_height, position.z)],
+#					[BOTTOM_LEFT_UV, BOTTOM_RIGHT_UV, TOP_RIGHT_UV, TOP_LEFT_UV],
+#					[], [], [Vector3.RIGHT, Vector3.RIGHT, Vector3.RIGHT, Vector3.RIGHT])
+				result.add_triangle_fan([Vector3(position.x + 1, max_height, position.z),
 					Vector3(position.x + 1, max_height, position.z - 1),
-					Vector3(position.x + 1, max_height, position.z)])#,
-					#[BOTTOM_LEFT_UV, BOTTOM_RIGHT_UV, TOP_RIGHT_UV, TOP_LEFT_UV],
-					##[BOTTOM_RIGHT_UV, BOTTOM_LEFT_UV, TOP_LEFT_UV, TOP_RIGHT_UV],
-				#[], [], [Vector3.RIGHT, Vector3.RIGHT, Vector3.RIGHT, Vector3.RIGHT])
+					Vector3(position.x + 1, min_height, position.z - 1),
+					Vector3(position.x + 1, min_height, position.z)],
+					[BOTTOM_LEFT_UV, BOTTOM_RIGHT_UV, TOP_RIGHT_UV, TOP_LEFT_UV],
+					[], [], [Vector3.RIGHT, Vector3.RIGHT, Vector3.RIGHT, Vector3.RIGHT])
 				
 			# South wall
 			if y == 0 or tiles_2d[y-1][x].height() < tile.height():
@@ -103,12 +114,18 @@ func generate_surface_tool():
 				var min_height = 0 if y == 0 else tiles_2d[y-1][x].height()
 				var max_height = tile.height()
 				
-				result.add_triangle_fan([Vector3(position.x, min_height, position.z),
-					Vector3(position.x + 1, min_height, position.z),
+#				result.add_triangle_fan([Vector3(position.x, min_height, position.z),
+#					Vector3(position.x + 1, min_height, position.z),
+#					Vector3(position.x + 1, max_height, position.z),
+#					Vector3(position.x, max_height, position.z)],
+#					[BOTTOM_LEFT_UV, BOTTOM_RIGHT_UV, TOP_RIGHT_UV, TOP_LEFT_UV],
+#					[], [], [Vector3.BACK, Vector3.BACK, Vector3.BACK, Vector3.BACK])
+				result.add_triangle_fan([Vector3(position.x, max_height, position.z),
 					Vector3(position.x + 1, max_height, position.z),
-					Vector3(position.x, max_height, position.z)])#,
-					#[BOTTOM_LEFT_UV, BOTTOM_RIGHT_UV, TOP_RIGHT_UV, TOP_LEFT_UV],
-				#[], [], [Vector3.BACK, Vector3.BACK, Vector3.BACK, Vector3.BACK])
+					Vector3(position.x + 1, min_height, position.z),
+					Vector3(position.x, min_height, position.z)],
+					[BOTTOM_LEFT_UV, BOTTOM_RIGHT_UV, TOP_RIGHT_UV, TOP_LEFT_UV],
+					[], [], [Vector3.BACK, Vector3.BACK, Vector3.BACK, Vector3.BACK])
 				
 			# North wall
 			if y == tiles_2d.size()- 1 or tiles_2d[y+1][x].height() < tile.height():
@@ -119,9 +136,10 @@ func generate_surface_tool():
 				result.add_triangle_fan([Vector3(position.x, min_height, position.z - 1),
 					Vector3(position.x + 1, min_height, position.z - 1),
 					Vector3(position.x + 1, max_height, position.z - 1),
-					Vector3(position.x, max_height, position.z - 1)])#,
-					#[BOTTOM_LEFT_UV, BOTTOM_RIGHT_UV, TOP_RIGHT_UV, TOP_LEFT_UV],
-				#[], [], [Vector3.FORWARD, Vector3.FORWARD, Vector3.FORWARD, Vector3.FORWARD])
+					Vector3(position.x, max_height, position.z - 1)],
+					[BOTTOM_LEFT_UV, BOTTOM_RIGHT_UV, TOP_RIGHT_UV, TOP_LEFT_UV],
+					[], [], 
+					[Vector3.FORWARD, Vector3.FORWARD, Vector3.FORWARD, Vector3.FORWARD])
 	
 	return result
  
